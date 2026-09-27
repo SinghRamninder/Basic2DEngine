@@ -1,6 +1,6 @@
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_main.h>
-
+#include "Vector2.h"
 #include <iostream>
 using namespace std;
 
@@ -33,6 +33,7 @@ int main(int argc, char* argv[]){
 			50.0f
 	};
 
+	Vector2 direction;
 	float playerSpeed = 100.0f;
 
 	while (running) {
@@ -48,20 +49,28 @@ int main(int argc, char* argv[]){
 		float deltaTime = static_cast<float>(currentFrame - lastFrame) / static_cast<float>(SDL_GetPerformanceFrequency());
 		lastFrame = currentFrame;
 
+		direction.x = 0.0f;
+		direction.y = 0.0f;
+
 		const bool* keyboardState = SDL_GetKeyboardState(nullptr);
 
 		if (keyboardState[SDL_SCANCODE_W]) {
-			playerRect.y -= playerSpeed * deltaTime;
+			direction.y -= 1.0f;
 		}
 		if (keyboardState[SDL_SCANCODE_S]) {
-			playerRect.y += playerSpeed * deltaTime;
+			direction.y += 1.0f;
 		}
 		if (keyboardState[SDL_SCANCODE_A]) {
-			playerRect.x -= playerSpeed * deltaTime;
+			direction.x -= 1.0f;
 		}
 		if (keyboardState[SDL_SCANCODE_D]) {
-			playerRect.x += playerSpeed * deltaTime;
+			direction.x += 1.0f;
 		}
+
+		direction.Normalize();
+
+		playerRect.x += direction.x * playerSpeed * deltaTime;
+		playerRect.y += direction.y * playerSpeed * deltaTime;
 
 		SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 		SDL_RenderClear(renderer);
