@@ -1,6 +1,6 @@
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_main.h>
-#include "Vector2.h"
+#include "Player.h"
 #include <iostream>
 using namespace std;
 
@@ -22,19 +22,11 @@ int main(int argc, char* argv[]){
 		return 1;
     }
 
+	Player player(100.0f, 100.0f);
+
 	bool running = true;
 
 	Uint64 lastFrame = SDL_GetPerformanceCounter();
-
-	SDL_FRect playerRect{
-			100.0f,
-			100.0f,
-			50.0f,
-			50.0f
-	};
-
-	Vector2 direction;
-	float playerSpeed = 100.0f;
 
 	while (running) {
 		SDL_Event event;
@@ -49,34 +41,14 @@ int main(int argc, char* argv[]){
 		float deltaTime = static_cast<float>(currentFrame - lastFrame) / static_cast<float>(SDL_GetPerformanceFrequency());
 		lastFrame = currentFrame;
 
-		direction.x = 0.0f;
-		direction.y = 0.0f;
-
 		const bool* keyboardState = SDL_GetKeyboardState(nullptr);
 
-		if (keyboardState[SDL_SCANCODE_W]) {
-			direction.y -= 1.0f;
-		}
-		if (keyboardState[SDL_SCANCODE_S]) {
-			direction.y += 1.0f;
-		}
-		if (keyboardState[SDL_SCANCODE_A]) {
-			direction.x -= 1.0f;
-		}
-		if (keyboardState[SDL_SCANCODE_D]) {
-			direction.x += 1.0f;
-		}
-
-		direction.Normalize();
-
-		playerRect.x += direction.x * playerSpeed * deltaTime;
-		playerRect.y += direction.y * playerSpeed * deltaTime;
+		player.Update(keyboardState, deltaTime);
 
 		SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 		SDL_RenderClear(renderer);
 
-		SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-		SDL_RenderFillRect(renderer, &playerRect);
+		player.Render(renderer);
 
 		SDL_RenderPresent(renderer);
 	}

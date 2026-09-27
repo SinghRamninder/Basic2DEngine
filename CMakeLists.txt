@@ -18,6 +18,7 @@ FetchContent_MakeAvailable(SDL)
 
 add_executable(Basic2DEngine
     src/main.cpp
+    src/Player.cpp
 )
 
 target_link_libraries(Basic2DEngine
