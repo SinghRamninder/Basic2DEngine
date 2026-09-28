@@ -18,6 +18,7 @@ FetchContent_MakeAvailable(SDL)
 
 add_executable(Basic2DEngine
     src/main.cpp
+    src/Game.cpp
     src/Player.cpp
 )
 
