@@ -34,6 +34,18 @@ void Game::ProcessInput() {
 		if (event.type == SDL_EVENT_QUIT) {
 			running = false;
 		}
+
+		if (event.type == SDL_EVENT_MOUSE_BUTTON_DOWN) {
+			if (event.button.button == SDL_BUTTON_LEFT) {
+				Vector2 playerPos = player.GetCenter();
+				Vector2 direction{
+					event.button.x - playerPos.x,
+					event.button.y - playerPos.y
+				};
+				direction.Normalize();
+				projectiles.emplace_back(playerPos, direction);
+			}
+		}
 	}
 }
 
@@ -41,6 +53,10 @@ void Game::Update() {
 	Uint64 currentFrame = SDL_GetPerformanceCounter();
 	deltaTime = static_cast<float>(currentFrame - lastFrame) / static_cast<float>(SDL_GetPerformanceFrequency());
 	lastFrame = currentFrame;
+
+	for (auto& projectile : projectiles) {
+		projectile.Update(deltaTime);
+	}
 
 	const bool* keyboardState = SDL_GetKeyboardState(nullptr);
 	player.Update(keyboardState, deltaTime);
@@ -51,6 +67,10 @@ void Game::Render() {
 	SDL_RenderClear(renderer);
 
 	player.Render(renderer);
+
+	for (auto& projectile : projectiles) {
+		projectile.Render(renderer);
+	}
 
 	SDL_RenderPresent(renderer);
 }

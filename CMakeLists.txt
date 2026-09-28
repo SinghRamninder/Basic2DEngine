@@ -20,6 +20,7 @@ add_executable(Basic2DEngine
     src/main.cpp
     src/Game.cpp
     src/Player.cpp
+    src/Projectile.cpp
 )
 
 target_link_libraries(Basic2DEngine

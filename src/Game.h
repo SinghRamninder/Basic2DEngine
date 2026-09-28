@@ -1,7 +1,9 @@
 #pragma once
 
 #include <SDL3/SDL.h>
+#include <vector>
 #include "Player.h"
+#include "Projectile.h"
 
 class Game
 {
@@ -31,4 +33,6 @@ private:
     float deltaTime = 0.0f;
 
     Player player{100.0f, 100.0f};
+
+	std::vector<Projectile> projectiles;
 };

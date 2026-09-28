@@ -1,5 +1,4 @@
 #include "Player.h"
-#include "Vector2.h"
 
 Player::Player(float x, float y) {
 	rect.x = x;
@@ -33,4 +32,10 @@ void Player::Update(const bool* keyboardState, float deltaTime) {
 void Player::Render(SDL_Renderer* renderer) const {
 	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 	SDL_RenderFillRect(renderer, &rect);
+}
+
+Vector2 Player::GetCenter() const {
+	float centerX = rect.x + (rect.w / 2.0f);
+	float centerY = rect.y + (rect.h / 2.0f);
+	return Vector2(centerX, centerY);
 }
