@@ -1,5 +1,6 @@
 #include "Game.h"
 #include <iostream>
+#include <algorithm>
 using namespace std;
 
 bool Game::Initialize() {
@@ -8,11 +9,15 @@ bool Game::Initialize() {
 		return false;
 	}
 
-	if (!SDL_CreateWindowAndRenderer("2D Game", 1920, 1080, 0, &window, &renderer)) {
+	if (!SDL_CreateWindowAndRenderer("2D Game", screenWidth, screenHeight, 0, &window, &renderer)) {
 		cerr << "Failed to create window" << SDL_GetError() << endl;
 
 		return false;
 	}
+
+	enemies.emplace_back(400.0f, 300.0f);
+	enemies.emplace_back(700.0f, 500.0f);
+	enemies.emplace_back(900.0f, 200.0f);
 
 	lastFrame = SDL_GetPerformanceCounter();
 	running = true;
@@ -37,13 +42,10 @@ void Game::ProcessInput() {
 
 		if (event.type == SDL_EVENT_MOUSE_BUTTON_DOWN) {
 			if (event.button.button == SDL_BUTTON_LEFT) {
-				Vector2 playerPos = player.GetCenter();
-				Vector2 direction{
-					event.button.x - playerPos.x,
-					event.button.y - playerPos.y
-				};
-				direction.Normalize();
-				projectiles.emplace_back(playerPos, direction);
+				Vector2 playerPosition = player.GetCenter();
+				Vector2 direction = Vector2::Direction(playerPosition, Vector2(event.button.x, event.button.y));
+				
+				projectiles.emplace_back(playerPosition, direction);
 			}
 		}
 	}
@@ -60,6 +62,16 @@ void Game::Update() {
 
 	const bool* keyboardState = SDL_GetKeyboardState(nullptr);
 	player.Update(keyboardState, deltaTime);
+
+	Vector2 playerPosition = player.GetCenter();
+
+	for (auto& enemy : enemies) {
+		enemy.Update(deltaTime, playerPosition);
+	}
+
+	erase_if(projectiles, [this](const Projectile& projectile) {
+		return projectile.isOffScreen(screenWidth, screenHeight);
+		});
 }
 
 void Game::Render() {
@@ -70,6 +82,10 @@ void Game::Render() {
 
 	for (auto& projectile : projectiles) {
 		projectile.Render(renderer);
+	}
+
+	for (auto& enemy : enemies) {
+		enemy.Render(renderer);
 	}
 
 	SDL_RenderPresent(renderer);

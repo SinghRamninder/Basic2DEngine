@@ -17,4 +17,10 @@ struct Vector2 {
 			y /= length;
 		}
 	}
+
+	static Vector2 Direction(const Vector2& from, const Vector2& to) {
+		Vector2 dir{ to.x - from.x, to.y - from.y };
+		dir.Normalize();
+		return dir;
+	}
 };

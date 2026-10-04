@@ -4,6 +4,7 @@
 #include <vector>
 #include "Player.h"
 #include "Projectile.h"
+#include "Enemy.h"
 
 class Game
 {
@@ -23,6 +24,9 @@ private:
     void Render();
 
 private:
+	int screenWidth = 1920;
+	int screenHeight = 1080;
+
     SDL_Window* window = nullptr;
     SDL_Renderer* renderer = nullptr;
 
@@ -35,4 +39,5 @@ private:
     Player player{100.0f, 100.0f};
 
 	std::vector<Projectile> projectiles;
+    std::vector<Enemy> enemies;
 };
