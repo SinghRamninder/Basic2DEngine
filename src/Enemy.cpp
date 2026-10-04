@@ -8,10 +8,18 @@ Enemy::Enemy(float x, float y) {
 }
 
 void Enemy::Update(float deltaTime, Vector2 playerPosition) {
-	direction = Vector2::Direction(GetCenter(), playerPosition);
+	Vector2 direction = Vector2::Direction(GetCenter(), playerPosition);
 
 	rect.x += direction.x * speed * deltaTime;
 	rect.y += direction.y * speed * deltaTime;
+}
+
+void Enemy::TakeDamage(float damage) {
+	health -= damage;
+}
+
+bool Enemy::isDead() const {
+	return health <= 0.0f;
 }
 
 void Enemy::Render(SDL_Renderer* renderer) const {
@@ -23,4 +31,8 @@ Vector2 Enemy::GetCenter() const {
 	float centerX = rect.x + (rect.w / 2.0f);
 	float centerY = rect.y + (rect.h / 2.0f);
 	return Vector2(centerX, centerY);
+}
+
+const SDL_FRect& Enemy::GetRect() const {
+	return rect;
 }

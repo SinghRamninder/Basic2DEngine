@@ -23,6 +23,8 @@ private:
 
     void Render();
 
+	bool checkCollision(const SDL_FRect& a, const SDL_FRect& b) const;
+
 private:
 	int screenWidth = 1920;
 	int screenHeight = 1080;

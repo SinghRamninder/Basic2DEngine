@@ -21,3 +21,7 @@ void Projectile::Render(SDL_Renderer* renderer) const {
 bool Projectile::isOffScreen(int screenWidth, int screenHeight) const {
 	return rect.x + rect.w < 0 || rect.x > screenWidth || rect.y + rect.h < 0 || rect.y > screenHeight;
 }
+
+const SDL_FRect& Projectile::GetRect() const {
+	return rect;
+}

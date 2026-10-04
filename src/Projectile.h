@@ -10,6 +10,7 @@ public:
 	void Update(float deltaTime);
 	void Render(SDL_Renderer* renderer) const;
 	bool isOffScreen(int screenWidth, int screenHeight) const;
+	const SDL_FRect& GetRect() const;
 
 private:
 	SDL_FRect rect;

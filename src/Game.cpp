@@ -56,12 +56,41 @@ void Game::Update() {
 	deltaTime = static_cast<float>(currentFrame - lastFrame) / static_cast<float>(SDL_GetPerformanceFrequency());
 	lastFrame = currentFrame;
 
+	const bool* keyboardState = SDL_GetKeyboardState(nullptr);
+	player.Update(keyboardState, deltaTime);
+
 	for (auto& projectile : projectiles) {
 		projectile.Update(deltaTime);
 	}
 
-	const bool* keyboardState = SDL_GetKeyboardState(nullptr);
-	player.Update(keyboardState, deltaTime);
+	for (auto it = projectiles.begin(); it != projectiles.end();) {
+
+		bool projectileHit = false;
+
+		for (auto ij = enemies.begin(); ij != enemies.end();) {
+
+			if (checkCollision(ij->GetRect(), it->GetRect())) {
+				ij->TakeDamage(20.0f);
+				projectileHit = true;
+
+				if (ij->isDead()) {
+					ij = enemies.erase(ij);
+				}
+
+				break;
+
+			} else {
+				++ij;
+			}
+		}
+
+		if (projectileHit) {
+			it = projectiles.erase(it);
+		}
+		else {
+			++it;
+		}
+	}
 
 	Vector2 playerPosition = player.GetCenter();
 
@@ -89,6 +118,10 @@ void Game::Render() {
 	}
 
 	SDL_RenderPresent(renderer);
+}
+
+bool Game::checkCollision(const SDL_FRect& a, const SDL_FRect& b) const {
+	return !((a.x + a.w) < b.x || a.x > (b.x + b.w) || (a.y + a.h) < b.y || a.y > (b.y + b.h));
 }
 
 Game::~Game() {
