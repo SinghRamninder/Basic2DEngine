@@ -135,7 +135,20 @@ void Game::Render() {
 		enemy.Render(renderer);
 	}
 
+	RenderUI();
+
 	SDL_RenderPresent(renderer);
+}
+
+void Game::RenderUI() {
+	float healthPercentage = player.GetHealth() / player.GetMaxHealth();
+	healthBar.w = healthBarBackground.w * healthPercentage;
+
+	SDL_SetRenderDrawColor(renderer, 100, 100, 100, 255);
+	SDL_RenderFillRect(renderer, &healthBarBackground);
+
+	SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
+	SDL_RenderFillRect(renderer, &healthBar);
 }
 
 bool Game::checkCollision(const SDL_FRect& a, const SDL_FRect& b) const {

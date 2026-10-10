@@ -42,6 +42,14 @@ bool Player::isDead() const {
 	return health <= 0.0f;
 }
 
+float Player::GetHealth() const {
+	return health;
+}
+
+float Player::GetMaxHealth() const {
+	return maxHealth;
+}
+
 Vector2 Player::GetCenter() const {
 	float centerX = rect.x + (rect.w / 2.0f);
 	float centerY = rect.y + (rect.h / 2.0f);

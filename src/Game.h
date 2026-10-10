@@ -43,4 +43,8 @@ private:
 
 	std::vector<Projectile> projectiles;
     std::vector<Enemy> enemies;
+
+	void RenderUI();
+	SDL_FRect healthBarBackground{ 1700.0f, 20.0f, 200.0f, 20.0f };
+	SDL_FRect healthBar{ 1700.0f, 20.0f, 200.0f, 20.0f };
 };
