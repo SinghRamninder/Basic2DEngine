@@ -12,6 +12,10 @@ void Enemy::Update(float deltaTime, Vector2 playerPosition) {
 
 	rect.x += direction.x * speed * deltaTime;
 	rect.y += direction.y * speed * deltaTime;
+
+	if (attackCooldown > 0.0f) {
+		attackCooldown -= deltaTime;
+	}
 }
 
 void Enemy::TakeDamage(float damage) {
@@ -20,6 +24,14 @@ void Enemy::TakeDamage(float damage) {
 
 bool Enemy::isDead() const {
 	return health <= 0.0f;
+}
+
+bool Enemy::CanAttack() const {
+	return attackCooldown <= 0.0f;
+}
+
+void Enemy::ResetAttackCooldown() {
+	attackCooldown = attackCooldownDuration;
 }
 
 void Enemy::Render(SDL_Renderer* renderer) const {

@@ -28,7 +28,9 @@ bool Game::Initialize() {
 void Game::Run() {
 	while (running) {
 		ProcessInput();
-		Update();
+		if (!gameOver) {
+			Update();
+		}
 		Render();
 	}
 }
@@ -40,12 +42,14 @@ void Game::ProcessInput() {
 			running = false;
 		}
 
-		if (event.type == SDL_EVENT_MOUSE_BUTTON_DOWN) {
-			if (event.button.button == SDL_BUTTON_LEFT) {
-				Vector2 playerPosition = player.GetCenter();
-				Vector2 direction = Vector2::Direction(playerPosition, Vector2(event.button.x, event.button.y));
-				
-				projectiles.emplace_back(playerPosition, direction);
+		if (!gameOver) {
+			if (event.type == SDL_EVENT_MOUSE_BUTTON_DOWN) {
+				if (event.button.button == SDL_BUTTON_LEFT) {
+					Vector2 playerPosition = player.GetCenter();
+					Vector2 direction = Vector2::Direction(playerPosition, Vector2(event.button.x, event.button.y));
+
+					projectiles.emplace_back(playerPosition, direction);
+				}
 			}
 		}
 	}
@@ -61,6 +65,12 @@ void Game::Update() {
 
 	for (auto& projectile : projectiles) {
 		projectile.Update(deltaTime);
+	}
+
+	Vector2 playerPosition = player.GetCenter();
+
+	for (auto& enemy : enemies) {
+		enemy.Update(deltaTime, playerPosition);
 	}
 
 	for (auto it = projectiles.begin(); it != projectiles.end();) {
@@ -92,22 +102,30 @@ void Game::Update() {
 		}
 	}
 
-	Vector2 playerPosition = player.GetCenter();
-
 	for (auto& enemy : enemies) {
-		enemy.Update(deltaTime, playerPosition);
+		if (checkCollision(enemy.GetRect(), player.GetRect()) && enemy.CanAttack()) {
+			player.TakeDamage(10.0f);
+			enemy.ResetAttackCooldown();
+		}
 	}
 
 	erase_if(projectiles, [this](const Projectile& projectile) {
 		return projectile.isOffScreen(screenWidth, screenHeight);
 		});
+
+	if (player.isDead()) {
+		gameOver = true;
+		cout << "Game Over!" << endl;
+	}
 }
 
 void Game::Render() {
 	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 	SDL_RenderClear(renderer);
 
-	player.Render(renderer);
+	if (!player.isDead()) {
+		player.Render(renderer);
+	}
 
 	for (auto& projectile : projectiles) {
 		projectile.Render(renderer);

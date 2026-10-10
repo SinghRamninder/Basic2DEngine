@@ -33,6 +33,7 @@ private:
     SDL_Renderer* renderer = nullptr;
 
     bool running = false;
+	bool gameOver = false;
 
     Uint64 lastFrame = 0;
 

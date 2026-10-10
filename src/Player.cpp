@@ -34,8 +34,20 @@ void Player::Render(SDL_Renderer* renderer) const {
 	SDL_RenderFillRect(renderer, &rect);
 }
 
+void Player::TakeDamage(float damage) {
+	health -= damage;
+}
+
+bool Player::isDead() const {
+	return health <= 0.0f;
+}
+
 Vector2 Player::GetCenter() const {
 	float centerX = rect.x + (rect.w / 2.0f);
 	float centerY = rect.y + (rect.h / 2.0f);
 	return Vector2(centerX, centerY);
+}
+
+const SDL_FRect& Player::GetRect() const {
+	return rect;
 }
