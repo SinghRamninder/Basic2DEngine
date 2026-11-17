@@ -2,6 +2,7 @@
 
 #include <SDL3/SDL.h>
 #include <vector>
+#include <random>
 #include "Player.h"
 #include "Projectile.h"
 #include "Enemy.h"
@@ -25,6 +26,10 @@ private:
 
 	bool checkCollision(const SDL_FRect& a, const SDL_FRect& b) const;
 
+    void RenderUI();
+
+    void UpdateEnemySpawning();
+
 private:
 	int screenWidth = 1920;
 	int screenHeight = 1080;
@@ -44,7 +49,11 @@ private:
 	std::vector<Projectile> projectiles;
     std::vector<Enemy> enemies;
 
-	void RenderUI();
+	std::mt19937 randomGenerator{ std::random_device{}() };
+
+	float enemySpawnTimer = 0.0f;
+	float enemySpawnInterval = 2.0f;
+
 	SDL_FRect healthBarBackground{ 1700.0f, 20.0f, 200.0f, 20.0f };
 	SDL_FRect healthBar{ 1700.0f, 20.0f, 200.0f, 20.0f };
 };

@@ -1,6 +1,7 @@
 #include "Game.h"
 #include <iostream>
 #include <algorithm>
+
 using namespace std;
 
 bool Game::Initialize() {
@@ -14,10 +15,6 @@ bool Game::Initialize() {
 
 		return false;
 	}
-
-	enemies.emplace_back(400.0f, 300.0f);
-	enemies.emplace_back(700.0f, 500.0f);
-	enemies.emplace_back(900.0f, 200.0f);
 
 	lastFrame = SDL_GetPerformanceCounter();
 	running = true;
@@ -109,6 +106,8 @@ void Game::Update() {
 		}
 	}
 
+	UpdateEnemySpawning();
+
 	erase_if(projectiles, [this](const Projectile& projectile) {
 		return projectile.isOffScreen(screenWidth, screenHeight);
 		});
@@ -116,6 +115,41 @@ void Game::Update() {
 	if (player.isDead()) {
 		gameOver = true;
 		cout << "Game Over!" << endl;
+	}
+}
+
+void Game::UpdateEnemySpawning() {
+	enemySpawnTimer += deltaTime;
+
+	if (enemySpawnTimer >= enemySpawnInterval) {
+		std::uniform_int_distribution<int> posDistribution(1, 4);
+		std::uniform_real_distribution<float> xDistribution(1.0f, screenWidth - 1.0f);
+		std::uniform_real_distribution<float> yDistribution(1.0f, screenHeight - 1.0f);
+
+		int pos = posDistribution(randomGenerator);
+		float x = xDistribution(randomGenerator);
+		float y = yDistribution(randomGenerator);
+
+		switch (pos)
+		{
+		case 1:
+			enemies.emplace_back(x, -50.0f);
+			break;
+
+		case 2:
+			enemies.emplace_back(x, static_cast<float>(screenHeight) + 50.0f);
+			break;
+
+		case 3:
+			enemies.emplace_back(-50.0f, y);
+			break;
+
+		case 4:
+			enemies.emplace_back(static_cast<float>(screenWidth) + 50.0f, y);
+			break;
+		}
+
+		enemySpawnTimer -= enemySpawnInterval;
 	}
 }
 
